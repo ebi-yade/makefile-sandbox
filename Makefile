@@ -15,7 +15,7 @@ LAMBDA_HANDLERS := $(notdir $(patsubst %/,%,$(sort $(dir $(wildcard ./$(LAMBDA_H
 TARGETS := $(LAMBDA_HANDLERS:%=$(DIST_DIR)/%)
 
 $(DIST_DIR)/%: $(LAMBDA_HANDLER_DIR)/% $(ENTIRE_SRC)
-	cd $< && $(GO_ENV) $(GO_BUILD) -ldflags="-s -w -X main.Revision=$(GIT_REV)" -o ../../$@
+	cd $< && $(GO_ENV) $(GO_BUILD) -o ../../$@
 
 .DEFAULT_GOAL := handlers
 .PHONY: handlers clean
