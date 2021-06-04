@@ -1,0 +1,41 @@
+name: aws-lambda-go
+
+on:
+  pull_request:
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - id: go-version
+        name: Determine go version
+        run: |
+          go_version=$(cat .go-version)
+          echo "::set-output name=this::$go_version"
+
+      - uses: actions/setup-go@v2
+        with:
+          go-version: ${{ steps.go-version.outputs.this }}
+
+      - name: 'Feature: multiple handlers'
+        run: |
+          make handlers
+          ls -al _dist/
+          make clean && git reset --hard HEAD && git clean -df
+
+      - name: 'Feature: a single handler'
+        run: |
+          rm -r _handler/fuga
+          make handlers
+          ls -al _dist/
+          make clean && git reset --hard HEAD && git clean -df
+
+      - name: 'Feature: no handlers'
+        run: |
+          rm -r handler
+          make handlers
+          ls -al _dist/ # => expected to complain like: 'ls: _dist/: No such file or directory'
